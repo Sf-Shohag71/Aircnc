@@ -28,7 +28,7 @@ const Login = () => {
     signIn(email, password)
       .then((result) => {
         console.log(result.user);
-        navigate("/");
+        navigate(from, {replace: true});
       })
       .catch((err) => {
         setLoading(false);
@@ -42,7 +42,7 @@ const Login = () => {
     signInWithGoogle()
       .then((result) => {
         console.log(result.user);
-        navigate("/");
+        navigate(from, {replace: true});
       })
       .catch((err) => {
         setLoading(false);
@@ -57,6 +57,7 @@ const Login = () => {
     resetPassword(email)
       .then(() => {
         toast.success("Reset password link send to your email. Please check");
+        setLoading(false);
       })
       .catch((err) => {
         setLoading(false);
@@ -75,7 +76,7 @@ const Login = () => {
           </p>
         </div>
         <form
-          onClick={handleSubmit}
+          onSubmit={handleSubmit}
           noValidate=""
           action=""
           className="space-y-6 ng-untouched ng-pristine ng-valid"
