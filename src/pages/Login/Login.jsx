@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FcGoogle } from "react-icons/fc";
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
 import toast from "react-hot-toast";
 import { TbFidgetSpinner } from "react-icons/tb";
@@ -16,6 +16,9 @@ const Login = () => {
   } = useContext(AuthContext);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const from = location?.state?.from?.pathname || "/";
+  const emailRef = useRef();
 
   // handle login form submit
   const handleSubmit = (event) => {
@@ -23,15 +26,15 @@ const Login = () => {
     const email = event.target.email.value;
     const password = event.target.password.value;
     signIn(email, password)
-    .then(result=> {
-      console.log(result.user);
-      navigate('/')
-    })
-    .catch(err=>{
-      setLoading(false);
-      console.log(err.message);
-      toast.error(err.message);
-    })
+      .then((result) => {
+        console.log(result.user);
+        navigate("/");
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err.message);
+        toast.error(err.message);
+      });
   };
 
   // Handle google sign-in
@@ -40,6 +43,20 @@ const Login = () => {
       .then((result) => {
         console.log(result.user);
         navigate("/");
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.log(err.message);
+        toast.error(err.message);
+      });
+  };
+
+  // handle password reset
+  const handleResetPassword = () => {
+    const email = emailRef.current.value;
+    resetPassword(email)
+      .then(() => {
+        toast.success("Reset password link send to your email. Please check");
       })
       .catch((err) => {
         setLoading(false);
@@ -69,6 +86,7 @@ const Login = () => {
                 Email address
               </label>
               <input
+                ref={emailRef}
                 type="email"
                 name="email"
                 id="email"
@@ -111,7 +129,7 @@ const Login = () => {
             </button>
           </div>
         </form>
-        <div className="space-y-1">
+        <div onClick={handleResetPassword} className="space-y-1">
           <button className="text-xs hover:underline hover:text-rose-500 text-gray-400">
             Forgot password?
           </button>
