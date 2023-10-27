@@ -4,6 +4,7 @@ import { useContext, useRef } from "react";
 import { AuthContext } from "../../providers/AuthProvider";
 import toast from "react-hot-toast";
 import { TbFidgetSpinner } from "react-icons/tb";
+import { saveUser } from "../../api/auth";
 
 const Login = () => {
   const {
@@ -28,7 +29,7 @@ const Login = () => {
     signIn(email, password)
       .then((result) => {
         console.log(result.user);
-        navigate(from, {replace: true});
+        navigate(from, { replace: true });
       })
       .catch((err) => {
         setLoading(false);
@@ -42,7 +43,8 @@ const Login = () => {
     signInWithGoogle()
       .then((result) => {
         console.log(result.user);
-        navigate(from, {replace: true});
+        saveUser(result.user);
+        navigate(from, { replace: true });
       })
       .catch((err) => {
         setLoading(false);
