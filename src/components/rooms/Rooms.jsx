@@ -5,6 +5,7 @@ import Card from "./Card";
 import Loader from "../shared/Loader";
 import { useSearchParams } from "react-router-dom";
 import Heading from "../Heading/Heading";
+import { getAllRooms } from "../../api/rooms";
 
 const Rooms = () => {
   const [rooms, setRooms] = useState([]);
@@ -14,8 +15,9 @@ const Rooms = () => {
 
   useEffect(() => {
     setLoading(true);
-    fetch("./rooms.json")
-      .then((res) => res.json())
+    // fetch("./rooms.json")
+    //   .then((res) => res.json())
+    getAllRooms()
       .then((data) => {
         if (category) {
           const filteredData = data.filter(
@@ -37,7 +39,7 @@ const Rooms = () => {
   return (
     <Container>
       {rooms && rooms.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-5 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-4 2xl:grid-cols-6 gap-8">
           {rooms.map((room, index) => (
             <Card key={index} room={room}></Card>
           ))}

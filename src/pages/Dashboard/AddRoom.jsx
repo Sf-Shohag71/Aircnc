@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import AddRoomForm from "../../components/Forms/AddRoomForm.jsx";
 import { imageUpload } from "../../api/imageUpload.js";
 import { AuthContext } from "../../providers/AuthProvider.jsx";
+import { addRoom } from "../../api/rooms.js";
 
 const AddRoom = () => {
   const [loading, setLoading] = useState(false);
@@ -49,6 +50,8 @@ const AddRoom = () => {
             email: user?.email,
           },
         };
+        //send data to server
+        addRoom(roomData);
         console.log(roomData);
         setLoading(false);
       })
@@ -61,9 +64,9 @@ const AddRoom = () => {
   const handleImageChange = (image) => {
     setUploadButtonText(image.name);
   };
-  const handleDates = (ranges) =>{
+  const handleDates = (ranges) => {
     setDates(ranges.selection);
-  }
+  };
 
   return (
     <>
