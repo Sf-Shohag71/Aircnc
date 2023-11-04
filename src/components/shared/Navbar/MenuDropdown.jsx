@@ -3,18 +3,44 @@ import Avatar from "./Avatar";
 import { useCallback, useContext, useState } from "react";
 import { AuthContext } from "../../../providers/AuthProvider";
 import { Link } from "react-router-dom";
+import HostModal from "../../Modal/HostRequestModal";
+import { becomeHost } from "../../../api/auth";
+import toast from "react-hot-toast";
 
 const MenuDropdown = () => {
-  const { user, logOut } = useContext(AuthContext);
+  const { user, logOut, role, setRole } = useContext(AuthContext);
   const [isOpen, setIsOpen] = useState(false);
+  const [modal, setModal] = useState(false);
+
   const toggleOpen = useCallback(() => {
     setIsOpen((value) => !value);
   }, []);
+
+  const modalHandler = (email) => {
+    becomeHost(email).then((data) => {
+      console.log(data);
+      toast.success("You are a host now, can post rooms!");
+      setRole("host");
+      closeModal();
+    });
+  };
+  const closeModal = () => {
+    setModal(false);
+  };
+
   return (
     <div className="relative">
       <div className="flex flex-row items-center gap-3">
-        <div className="hidden md:block text-sm font-semibold py-3 px-4 rounded-full hover:bg-neutral-100 transition cursor-pointer">
-          AirCNC your home
+        <div className="hidden md:block text-sm font-semibold py-3 px-8 rounded-full hover:bg-neutral-100 transition cursor-pointer">
+          {!role && (
+            <button
+              className="hover:bg-neutral-100"
+              disabled="!user"
+              onClick={() => setModal(true)}
+            >
+              AirCNC your home
+            </button>
+          )}
         </div>
         <div
           onClick={toggleOpen}
@@ -44,7 +70,10 @@ const MenuDropdown = () => {
                   Dashboard
                 </Link>
                 <div
-                  onClick={logOut}
+                  onClick={() => {
+                    setRole(null);
+                    logOut();
+                  }}
                   className="px-4 py-3 hover:bg-neutral-100 transition font-semibold cursor-pointer"
                 >
                   Logout
@@ -69,6 +98,12 @@ const MenuDropdown = () => {
           </div>
         </div>
       )}
+      <HostModal
+        isOpen={modal}
+        email={user?.email}
+        modalHandler={modalHandler}
+        closeModal={closeModal}
+      ></HostModal>
     </div>
   );
 };
