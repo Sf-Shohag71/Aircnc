@@ -4,6 +4,9 @@ import Button from "../Button/Button";
 import { formatDistance } from "date-fns";
 import { AuthContext } from "../../providers/AuthProvider";
 import BookingModal from "../Modal/BookingModal";
+import { addBooking, updateStatus } from "../../api/bookings";
+import toast from "react-hot-toast";
+import { Navigate } from "react-router-dom";
 
 const RoomReservation = ({ singleRoomDetails }) => {
   const { user, role } = useContext(AuthContext);
@@ -41,13 +44,28 @@ const RoomReservation = ({ singleRoomDetails }) => {
     to: value.endDate,
     from: value.startDate,
     title: singleRoomDetails.title,
-    guests: singleRoomDetails.guests,
+    roomId: singleRoomDetails._id,
+    image: singleRoomDetails.image,
+    // guests: singleRoomDetails.guests,
   });
 
   const handleSelect = (ranges) => {
-    setValue(...value);
+    setValue({ ...value });
   };
-  const handleModal = () => {
+  const modalHandler = () => {
+    addBooking(bookingInfo)
+      .then((data) => {
+        console.log(data);
+        updateStatus(singleRoomDetails._id, true)
+          .then((data) => {
+            console.log(data);
+            toast.success("Booking successful!");
+            Navigate('/dashboard/my-bookings');
+            closeModal();
+          })
+          .catch((err) => console.log(err.message));
+      })
+      .catch((err) => console.log(err));
     console.log(bookingInfo);
   };
 
@@ -70,7 +88,7 @@ const RoomReservation = ({ singleRoomDetails }) => {
           onClick={() => {
             setIsOpen(true);
           }}
-          disabled={singleRoomDetails.host.email === user.email}
+          disabled={singleRoomDetails.host.email === user.email || singleRoomDetails.booked}
           label="Reserve"
         ></Button>
       </div>
@@ -82,7 +100,7 @@ const RoomReservation = ({ singleRoomDetails }) => {
       <BookingModal
         isOpen={isOpen}
         bookingInfo={bookingInfo}
-        handleModal={handleModal}
+        modalHandler={modalHandler}
         closeModal={closeModal}
       ></BookingModal>
     </div>
