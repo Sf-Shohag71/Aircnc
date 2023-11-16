@@ -6,10 +6,11 @@ import { AuthContext } from "../../providers/AuthProvider";
 import BookingModal from "../Modal/BookingModal";
 import { addBooking, updateStatus } from "../../api/bookings";
 import toast from "react-hot-toast";
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const RoomReservation = ({ singleRoomDetails }) => {
   const { user, role } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
   const closeModal = () => {
@@ -60,7 +61,7 @@ const RoomReservation = ({ singleRoomDetails }) => {
           .then((data) => {
             console.log(data);
             toast.success("Booking successful!");
-            Navigate('/dashboard/my-bookings');
+            navigate('/dashboard/my-bookings');
             closeModal();
           })
           .catch((err) => console.log(err.message));
